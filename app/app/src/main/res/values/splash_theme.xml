@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Define the splash screen theme -->
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <!-- Set the splash screen background -->
+        <item name="windowSplashScreenBackground">#F4F7FB</item>
+        
+        <!-- Use the launcher icon (or a custom drawable) as the center icon -->
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_round</item>
+        
+        <!-- Define the post-splash theme -->
+        <item name="postSplashScreenTheme">@style/Theme.Lystra</item>
+    </style>
+</resources>

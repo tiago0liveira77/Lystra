@@ -1,5 +1,6 @@
 package com.titos.lystra.data.repository
 
+import android.util.Log
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -40,9 +41,12 @@ class FirestoreShoppingRepository(
             .orderBy("addedAt", Query.Direction.ASCENDING)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
+                    Log.e("FirestoreSync", "observeActiveList error", error)
                     close(error)
                     return@addSnapshotListener
                 }
+                val isFromCache = snapshot?.metadata?.isFromCache == true
+                Log.d("FirestoreSync", "observeActiveList -> isFromCache: $isFromCache, items: ${snapshot?.size()}")
                 val items = snapshot?.documents?.mapNotNull { doc ->
                     doc.data?.let { ShoppingItem.fromMap(doc.id, it) }
                 } ?: emptyList()
@@ -108,6 +112,7 @@ class FirestoreShoppingRepository(
 
     override suspend fun getShoppingItem(itemId: String): ShoppingItem? {
         val doc = activeListRef.document(itemId).get().await()
+        Log.d("FirestoreSync", "getShoppingItem -> isFromCache: ${doc.metadata.isFromCache}")
         return doc.data?.let { ShoppingItem.fromMap(doc.id, it) }
     }
 
@@ -117,12 +122,15 @@ class FirestoreShoppingRepository(
 
     override fun observeProducts(): Flow<List<Product>> = callbackFlow {
         val registration = productsRef
-            .orderBy("lastPurchasedAt", Query.Direction.DESCENDING)
+            .orderBy("createdAt", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
+                    Log.e("FirestoreSync", "observeProducts error", error)
                     close(error)
                     return@addSnapshotListener
                 }
+                val isFromCache = snapshot?.metadata?.isFromCache == true
+                Log.d("FirestoreSync", "observeProducts -> isFromCache: $isFromCache, items: ${snapshot?.size()}")
                 val products = snapshot?.documents?.mapNotNull { doc ->
                     doc.data?.let { Product.fromMap(doc.id, it) }
                 } ?: emptyList()
@@ -137,9 +145,12 @@ class FirestoreShoppingRepository(
             .limit(limit.toLong())
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
+                    Log.e("FirestoreSync", "observeFrequentProducts error", error)
                     close(error)
                     return@addSnapshotListener
                 }
+                val isFromCache = snapshot?.metadata?.isFromCache == true
+                Log.d("FirestoreSync", "observeFrequentProducts -> isFromCache: $isFromCache, items: ${snapshot?.size()}")
                 val products = snapshot?.documents?.mapNotNull { doc ->
                     doc.data?.let { Product.fromMap(doc.id, it) }
                 } ?: emptyList()
@@ -204,6 +215,7 @@ class FirestoreShoppingRepository(
 
     override suspend fun getProduct(productId: String): Product? {
         val doc = productsRef.document(productId).get().await()
+        Log.d("FirestoreSync", "getProduct -> isFromCache: ${doc.metadata.isFromCache}")
         return doc.data?.let { Product.fromMap(doc.id, it) }
     }
 
