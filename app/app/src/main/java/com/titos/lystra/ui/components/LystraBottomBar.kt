@@ -68,6 +68,7 @@ fun LystraBottomBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .navigationBarsPadding()
                 .height(Dimens.BottomNavHeight)
                 .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.SpaceAround,
