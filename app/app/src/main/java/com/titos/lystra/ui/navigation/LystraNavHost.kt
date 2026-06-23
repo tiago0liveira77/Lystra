@@ -47,7 +47,15 @@ fun LystraNavHost(
         composable(Screen.List.route) {
             ListScreen(
                 repository = repository,
-                onNavigateToAdd = { navController.navigate(Screen.Add.route) },
+                onNavigateToAdd = {
+                    navController.navigate(Screen.Add.route) {
+                        popUpTo(Screen.List.route) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
                 onNavigateToEdit = { itemId ->
                     navController.navigate(Screen.Edit(itemId).route)
                 }

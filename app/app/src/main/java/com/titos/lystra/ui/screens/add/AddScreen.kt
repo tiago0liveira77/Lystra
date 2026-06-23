@@ -2,6 +2,7 @@ package com.titos.lystra.ui.screens.add
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -10,13 +11,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -39,6 +46,9 @@ fun AddScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+    val scrollState = androidx.compose.foundation.rememberScrollState()
 
     // Show snackbar on successful add
     LaunchedEffect(uiState.addedMessage) {
@@ -51,7 +61,16 @@ fun AddScreen(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                })
+            }
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -63,9 +82,7 @@ fun AddScreen(
                 )
         ) {
             // Search Section
-            Box(modifier = Modifier.fillMaxWidth()) {
-                // Search Input
-                OutlinedTextField(
+            OutlinedTextField(
                     value = uiState.searchQuery,
                     onValueChange = { viewModel.updateSearchQuery(it) },
                     modifier = Modifier.fillMaxWidth(),
@@ -106,23 +123,20 @@ fun AddScreen(
                         focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
                     ),
                     textStyle = MaterialTheme.typography.bodyLarge,
-                )
-
-                // Suggestions Dropdown
-                if (uiState.suggestions.isNotEmpty() && uiState.isSearching) {
-                    SuggestionsDropdown(
-                        suggestions = uiState.suggestions,
-                        query = uiState.searchQuery,
-                        onSuggestionClick = { product ->
-                            viewModel.quickAdd(product)
-                            viewModel.clearSearch()
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 64.dp)
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = androidx.compose.foundation.text.KeyboardActions(
+                        onDone = {
+                            if (uiState.searchQuery.isNotBlank()) {
+                                viewModel.addNewProduct(uiState.searchQuery)
+                                viewModel.clearSearch()
+                                keyboardController?.hide()
+                                focusManager.clearFocus()
+                            }
+                        }
                     )
-                }
-            }
+                )
 
             Spacer(modifier = Modifier.height(32.dp))
 
@@ -176,6 +190,7 @@ fun AddScreen(
             } else {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
+                    modifier = Modifier.weight(1f),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
@@ -185,11 +200,43 @@ fun AddScreen(
                     ) { product ->
                         ProductCard(
                             product = product,
-                            onAddClick = { viewModel.quickAdd(it) }
+                            onAddClick = { 
+                                viewModel.quickAdd(it)
+                                keyboardController?.hide()
+                                focusManager.clearFocus()
+                            }
                         )
                     }
                 }
             }
+        }
+
+        // Overlay Dropdown
+        if (uiState.searchQuery.isNotBlank() && uiState.isSearching) {
+            SuggestionsDropdown(
+                suggestions = uiState.suggestions,
+                query = uiState.searchQuery,
+                onSuggestionClick = { product ->
+                    viewModel.quickAdd(product)
+                    viewModel.clearSearch()
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                },
+                onCreateNewClick = { query ->
+                    viewModel.addNewProduct(query)
+                    viewModel.clearSearch()
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        top = 16.dp + 64.dp + 8.dp, // 16dp outer padding + 64dp textfield height + 8dp spacing
+                        start = Dimens.MarginEdge,
+                        end = Dimens.MarginEdge
+                    )
+                    .heightIn(max = 300.dp)
+            )
         }
 
         // Snackbar
@@ -207,6 +254,7 @@ private fun SuggestionsDropdown(
     suggestions: List<Product>,
     query: String,
     onSuggestionClick: (Product) -> Unit,
+    onCreateNewClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Surface(
@@ -215,7 +263,9 @@ private fun SuggestionsDropdown(
         shape = RoundedCornerShape(12.dp),
         shadowElevation = 4.dp,
     ) {
-        Column {
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState())
+        ) {
             suggestions.forEach { product ->
                 Row(
                     modifier = Modifier
@@ -268,6 +318,32 @@ private fun SuggestionsDropdown(
                         modifier = Modifier.size(16.dp)
                     )
                 }
+            }
+
+            // Create new item row
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onCreateNewClick(query) }
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .heightIn(min = Dimens.TouchTarget),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Add,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(20.dp)
+                )
+
+                Spacer(Modifier.width(12.dp))
+
+                Text(
+                    text = "Criar novo item: \"$query\"",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.weight(1f)
+                )
             }
 
             // Footer

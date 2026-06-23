@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.DragIndicator
 import androidx.compose.material3.*
+import androidx.compose.ui.graphics.Color
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +39,7 @@ import com.titos.lystra.ui.theme.StrikethroughStyle
 fun ShoppingListItem(
     item: ShoppingItem,
     onToggle: (ShoppingItem) -> Unit,
+    onDelete: (ShoppingItem) -> Unit = {},
     onLongClick: ((ShoppingItem) -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
@@ -62,7 +65,48 @@ fun ShoppingListItem(
 
     val interactionSource = remember { MutableInteractionSource() }
 
-    Surface(
+    val dismissState = rememberSwipeToDismissBoxState(
+        confirmValueChange = { dismissValue ->
+            if (dismissValue == SwipeToDismissBoxValue.EndToStart) {
+                onDelete(item)
+                true
+            } else {
+                false
+            }
+        }
+    )
+
+    SwipeToDismissBox(
+        state = dismissState,
+        backgroundContent = {
+            val color by animateColorAsState(
+                targetValue = if (dismissState.targetValue == SwipeToDismissBoxValue.EndToStart) {
+                    MaterialTheme.colorScheme.errorContainer
+                } else {
+                    Color.Transparent
+                },
+                label = "swipe_color"
+            )
+            
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color)
+                    .padding(end = 24.dp),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                if (dismissState.targetValue == SwipeToDismissBoxValue.EndToStart) {
+                    Icon(
+                        imageVector = Icons.Outlined.Delete,
+                        contentDescription = "Remover",
+                        tint = MaterialTheme.colorScheme.onErrorContainer
+                    )
+                }
+            }
+        },
+        enableDismissFromStartToEnd = false
+    ) {
+        Surface(
         modifier = modifier
             .fillMaxWidth()
             .height(Dimens.ListItemHeight)
@@ -185,6 +229,7 @@ fun ShoppingListItem(
                     .size(24.dp)
             )
         }
+    }
     }
 
     // Reset scale after animation

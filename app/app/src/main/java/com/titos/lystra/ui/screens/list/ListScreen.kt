@@ -101,18 +101,21 @@ fun ListScreen(
                         ) {
                             Column {
                                 items.forEachIndexed { index, shoppingItem ->
-                                    ShoppingListItem(
-                                        item = shoppingItem,
-                                        onToggle = { viewModel.toggleItem(it) },
-                                        onLongClick = { onNavigateToEdit(it.id) }
-                                    )
-                                    if (index < items.lastIndex) {
-                                        HorizontalDivider(
-                                            modifier = Modifier.padding(start = 56.dp),
-                                            thickness = 0.5.dp,
-                                            color = MaterialTheme.colorScheme.surfaceVariant
-                                                .copy(alpha = 0.5f)
+                                    key(shoppingItem.id) {
+                                        ShoppingListItem(
+                                            item = shoppingItem,
+                                            onToggle = { viewModel.toggleItem(it) },
+                                            onDelete = { viewModel.removeItem(it) },
+                                            onLongClick = { onNavigateToEdit(it.id) }
                                         )
+                                        if (index < items.lastIndex) {
+                                            HorizontalDivider(
+                                                modifier = Modifier.padding(start = 56.dp),
+                                                thickness = 0.5.dp,
+                                                color = MaterialTheme.colorScheme.surfaceVariant
+                                                    .copy(alpha = 0.5f)
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -167,17 +170,20 @@ fun ListScreen(
                             ) {
                                 Column {
                                     uiState.cartItems.forEachIndexed { index, cartItem ->
-                                        ShoppingListItem(
-                                            item = cartItem,
-                                            onToggle = { viewModel.toggleItem(it) }
-                                        )
-                                        if (index < uiState.cartItems.lastIndex) {
-                                            HorizontalDivider(
-                                                modifier = Modifier.padding(start = 56.dp),
-                                                thickness = 0.5.dp,
-                                                color = MaterialTheme.colorScheme.surfaceVariant
-                                                    .copy(alpha = 0.3f)
+                                        key(cartItem.id) {
+                                            ShoppingListItem(
+                                                item = cartItem,
+                                                onToggle = { viewModel.toggleItem(it) },
+                                                onDelete = { viewModel.removeItem(it) }
                                             )
+                                            if (index < uiState.cartItems.lastIndex) {
+                                                HorizontalDivider(
+                                                    modifier = Modifier.padding(start = 56.dp),
+                                                    thickness = 0.5.dp,
+                                                    color = MaterialTheme.colorScheme.surfaceVariant
+                                                        .copy(alpha = 0.3f)
+                                                )
+                                            }
                                         }
                                     }
                                 }

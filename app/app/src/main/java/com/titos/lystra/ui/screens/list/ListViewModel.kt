@@ -68,6 +68,19 @@ class ListViewModel(
     }
 
     /**
+     * Remove an item from the list entirely.
+     */
+    fun removeItem(item: ShoppingItem) {
+        viewModelScope.launch {
+            try {
+                repository.removeFromList(item.id)
+            } catch (_: Exception) {
+                // Firestore will sync when back online
+            }
+        }
+    }
+
+    /**
      * Clear all items in the cart (end of shopping session).
      */
     fun clearCart() {
