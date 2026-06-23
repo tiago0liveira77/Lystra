@@ -23,6 +23,8 @@ class AddViewModel(
     private val _uiState = MutableStateFlow(AddUiState())
     val uiState: StateFlow<AddUiState> = _uiState.asStateFlow()
 
+    private var allProducts: List<Product> = emptyList()
+
     init {
         // Load frequent products
         viewModelScope.launch {
@@ -30,6 +32,19 @@ class AddViewModel(
                 .catch { /* offline fallback */ }
                 .collect { products ->
                     _uiState.update { it.copy(frequentProducts = products) }
+                }
+        }
+
+        // Cache all products for fast client-side case-insensitive search
+        viewModelScope.launch {
+            repository.observeProducts()
+                .catch { /* fallback */ }
+                .collect { products ->
+                    allProducts = products
+                    // Update suggestions if currently searching
+                    if (_uiState.value.isSearching) {
+                        filterProductsLocally(_uiState.value.searchQuery)
+                    }
                 }
         }
     }
@@ -42,19 +57,22 @@ class AddViewModel(
             return
         }
 
-        viewModelScope.launch {
-            repository.searchProducts(query)
-                .catch { /* fallback */ }
-                .collect { results ->
-                    _uiState.update { it.copy(suggestions = results) }
-                }
-        }
+        filterProductsLocally(query)
+    }
+
+    private fun filterProductsLocally(query: String) {
+        val normalizedQuery = query.trim().lowercase()
+        val results = allProducts.filter {
+            it.name.lowercase().contains(normalizedQuery)
+        }.take(10) // Limit suggestions to 10
+        
+        _uiState.update { it.copy(suggestions = results) }
     }
 
     /**
      * Quick-add a product directly to the active list with defaults.
      */
-    fun quickAdd(product: Product) {
+    fun quickAdd(product: Product, onAdded: ((String) -> Unit)? = null) {
         viewModelScope.launch {
             val item = ShoppingItem(
                 productId = product.id,
@@ -67,10 +85,11 @@ class AddViewModel(
                 isInCart = false,
                 addedAt = Timestamp.now()
             )
-            repository.addToList(item)
+            val id = repository.addToList(item)
             _uiState.update {
                 it.copy(addedMessage = "${product.name} adicionado à lista")
             }
+            onAdded?.invoke(id)
         }
     }
 

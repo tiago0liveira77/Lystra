@@ -23,4 +23,12 @@ sealed class Screen(val route: String) {
             const val ARG_ITEM_ID = "itemId"
         }
     }
+
+    /** Edit screen for the global product catalog */
+    data class ProductEdit(val productId: String) : Screen("productEdit/$productId") {
+        companion object {
+            const val ROUTE_TEMPLATE = "productEdit/{productId}"
+            const val ARG_PRODUCT_ID = "productId"
+        }
+    }
 }

@@ -52,7 +52,8 @@ class FirestoreShoppingRepository(
     }
 
     override suspend fun addToList(item: ShoppingItem): String {
-        val docRef = activeListRef.add(item.toMap()).await()
+        val docRef = activeListRef.document() // Generate ID synchronously
+        docRef.set(item.toMap()) // Fire and forget for offline support
         return docRef.id
     }
 
@@ -65,15 +66,15 @@ class FirestoreShoppingRepository(
         } else {
             updates["checkedAt"] = null
         }
-        activeListRef.document(itemId).update(updates).await()
+        activeListRef.document(itemId).update(updates)
     }
 
     override suspend fun updateItem(item: ShoppingItem) {
-        activeListRef.document(item.id).set(item.toMap()).await()
+        activeListRef.document(item.id).set(item.toMap())
     }
 
     override suspend fun removeFromList(itemId: String) {
-        activeListRef.document(itemId).delete().await()
+        activeListRef.document(itemId).delete()
     }
 
     override suspend fun clearCart() {
@@ -180,10 +181,11 @@ class FirestoreShoppingRepository(
 
     override suspend fun upsertProduct(product: Product): String {
         return if (product.id.isNotEmpty()) {
-            productsRef.document(product.id).set(product.toMap()).await()
+            productsRef.document(product.id).set(product.toMap())
             product.id
         } else {
-            val docRef = productsRef.add(product.toMap()).await()
+            val docRef = productsRef.document()
+            docRef.set(product.toMap())
             docRef.id
         }
     }
@@ -198,5 +200,14 @@ class FirestoreShoppingRepository(
                 "lastPurchasedAt" to Timestamp.now()
             ))
         }.await()
+    }
+
+    override suspend fun getProduct(productId: String): Product? {
+        val doc = productsRef.document(productId).get().await()
+        return doc.data?.let { Product.fromMap(doc.id, it) }
+    }
+
+    override suspend fun deleteProduct(productId: String) {
+        productsRef.document(productId).delete()
     }
 }

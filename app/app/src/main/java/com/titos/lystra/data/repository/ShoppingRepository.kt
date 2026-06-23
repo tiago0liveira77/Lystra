@@ -53,4 +53,10 @@ interface ShoppingRepository {
 
     /** Increment the purchase count for a product */
     suspend fun recordPurchase(productId: String)
+
+    /** Get a single product by ID */
+    suspend fun getProduct(productId: String): Product?
+
+    /** Delete a product from the catalog */
+    suspend fun deleteProduct(productId: String)
 }

@@ -14,6 +14,7 @@ import com.titos.lystra.ui.screens.add.AddScreen
 import com.titos.lystra.ui.screens.edit.EditScreen
 import com.titos.lystra.ui.screens.history.HistoryScreen
 import com.titos.lystra.ui.screens.list.ListScreen
+import com.titos.lystra.ui.screens.productedit.ProductEditScreen
 import com.titos.lystra.ui.screens.profile.ProfileScreen
 
 /**
@@ -66,8 +67,8 @@ fun LystraNavHost(
         composable(Screen.Add.route) {
             AddScreen(
                 repository = repository,
-                onNavigateToEdit = { itemId ->
-                    navController.navigate(Screen.Edit(itemId).route)
+                onNavigateToProductEdit = { productId ->
+                    navController.navigate(Screen.ProductEdit(productId).route)
                 }
             )
         }
@@ -94,6 +95,21 @@ fun LystraNavHost(
             val itemId = backStackEntry.arguments?.getString(Screen.Edit.ARG_ITEM_ID) ?: ""
             EditScreen(
                 itemId = itemId,
+                repository = repository,
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        // Edit Product Catalog
+        composable(
+            route = Screen.ProductEdit.ROUTE_TEMPLATE,
+            arguments = listOf(
+                navArgument(Screen.ProductEdit.ARG_PRODUCT_ID) { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val productId = backStackEntry.arguments?.getString(Screen.ProductEdit.ARG_PRODUCT_ID) ?: ""
+            ProductEditScreen(
+                productId = productId,
                 repository = repository,
                 onNavigateBack = { navController.popBackStack() }
             )

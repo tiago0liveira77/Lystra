@@ -117,6 +117,14 @@ class MockShoppingRepository : ShoppingRepository {
         return id
     }
 
+    override suspend fun getProduct(productId: String): Product? {
+        return products.value.find { it.id == productId }
+    }
+
+    override suspend fun deleteProduct(productId: String) {
+        products.update { list -> list.filterNot { it.id == productId } }
+    }
+
     override suspend fun recordPurchase(productId: String) {
         products.update { list ->
             list.map {

@@ -41,7 +41,7 @@ import com.titos.lystra.ui.theme.Dimens
 @Composable
 fun AddScreen(
     repository: ShoppingRepository,
-    onNavigateToEdit: (String) -> Unit,
+    onNavigateToProductEdit: (String) -> Unit,
     viewModel: AddViewModel = viewModel { AddViewModel(repository) },
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -204,6 +204,9 @@ fun AddScreen(
                                 viewModel.quickAdd(it)
                                 keyboardController?.hide()
                                 focusManager.clearFocus()
+                            },
+                            onEditClick = {
+                                onNavigateToProductEdit(it.id)
                             }
                         )
                     }

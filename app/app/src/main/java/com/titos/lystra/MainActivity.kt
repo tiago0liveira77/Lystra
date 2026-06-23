@@ -44,9 +44,8 @@ fun LystraApp() {
     // Determine if we're on a "detail" screen (hide top/bottom bars)
     val isDetailScreen = currentRoute.startsWith("edit/")
 
-    // Use MockShoppingRepository for UI development.
-    // Replace with FirestoreShoppingRepository() once google-services.json is added.
-    val repository = remember { MockShoppingRepository() }
+    // Use FirestoreShoppingRepository for real database connection.
+    val repository = remember { com.titos.lystra.data.repository.FirestoreShoppingRepository() }
 
     Scaffold(
         modifier = Modifier.fillMaxSize().imePadding(),

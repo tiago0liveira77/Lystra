@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -32,6 +33,7 @@ import com.titos.lystra.data.model.ProductCategory
 fun ProductCard(
     product: Product,
     onAddClick: (Product) -> Unit,
+    onEditClick: (Product) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val category = ProductCategory.fromDisplayName(product.category)
@@ -108,26 +110,43 @@ fun ProductCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
 
-                // Green "+" button
-                FilledIconButton(
-                    onClick = {
-                        addScale = 0.85f
-                        onAddClick(product)
-                    },
-                    modifier = Modifier
-                        .size(40.dp)
-                        .scale(animatedAddScale),
-                    colors = IconButtonDefaults.filledIconButtonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    ),
-                    shape = CircleShape
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Add,
-                        contentDescription = "Adicionar ${product.name}",
-                        modifier = Modifier.size(24.dp)
-                    )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    // Edit Button
+                    IconButton(
+                        onClick = { onEditClick(product) },
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Edit,
+                            contentDescription = "Editar ${product.name}",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(4.dp))
+
+                    // Green "+" button
+                    FilledIconButton(
+                        onClick = {
+                            addScale = 0.85f
+                            onAddClick(product)
+                        },
+                        modifier = Modifier
+                            .size(40.dp)
+                            .scale(animatedAddScale),
+                        colors = IconButtonDefaults.filledIconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        ),
+                        shape = CircleShape
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = "Adicionar ${product.name}",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
                 }
             }
         }
