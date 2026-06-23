@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FreshCart Logic - Quick Add</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-container": "#3a7b39",
+                    "surface": "#fbf9f9",
+                    "inverse-surface": "#303031",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed": "#acf4a4",
+                    "on-background": "#1b1c1c",
+                    "surface-container-low": "#f5f3f3",
+                    "on-surface-variant": "#40493d",
+                    "primary": "#0d631b",
+                    "surface-container-lowest": "#ffffff",
+                    "outline-variant": "#bfcaba",
+                    "on-tertiary-fixed-variant": "#0c5216",
+                    "on-error": "#ffffff",
+                    "on-surface": "#1b1c1c",
+                    "on-tertiary-fixed": "#002203",
+                    "surface-container-high": "#e9e8e7",
+                    "on-primary-container": "#cbffc2",
+                    "on-secondary-fixed-variant": "#42493e",
+                    "primary-fixed": "#a3f69c",
+                    "primary-container": "#2e7d32",
+                    "secondary-fixed-dim": "#c2c9bb",
+                    "background": "#fbf9f9",
+                    "on-primary-fixed-variant": "#005312",
+                    "surface-bright": "#fbf9f9",
+                    "surface-variant": "#e3e2e2",
+                    "secondary": "#596055",
+                    "surface-container-highest": "#e3e2e2",
+                    "surface-container": "#efeded",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-fixed": "#171d14",
+                    "tertiary-fixed-dim": "#91d78a",
+                    "surface-tint": "#1b6d24",
+                    "on-secondary": "#ffffff",
+                    "inverse-on-surface": "#f2f0f0",
+                    "on-primary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-primary-fixed": "#002204",
+                    "on-secondary-container": "#5f665b",
+                    "secondary-container": "#dee5d6",
+                    "inverse-primary": "#88d982",
+                    "tertiary": "#1f6223",
+                    "on-tertiary-container": "#c8ffbf",
+                    "primary-fixed-dim": "#88d982",
+                    "surface-dim": "#dbdad9",
+                    "secondary-fixed": "#dee5d6",
+                    "outline": "#707a6c",
+                    "error-container": "#ffdad6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "12px",
+                    "touch-target": "48px",
+                    "base": "8px",
+                    "list-item-height": "64px",
+                    "bottom-nav-height": "80px",
+                    "margin-edge": "16px"
+            },
+            "fontFamily": {
+                    "body-md-strikethrough": ["Inter"],
+                    "headline-sm": ["Inter"],
+                    "label-lg": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "label-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md-strikethrough": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "26px", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "fontWeight": "500"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.surface');
+            color: theme('colors.on-surface');
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Custom scrollbar for suggestions */
+        .suggestions-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .suggestions-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .suggestions-scroll::-webkit-scrollbar-thumb {
+            background-color: theme('colors.outline-variant');
+            border-radius: 4px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="min-h-screen flex flex-col font-body-md text-body-md">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full flex justify-between items-center h-14 px-margin-edge bg-surface shadow-sm z-40">
+<button aria-label="Sync" class="flex items-center justify-center w-touch-target h-touch-target text-primary hover:bg-surface-container-high transition-colors active:scale-95 duration-200 rounded-full">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">sync</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-primary font-bold tracking-tight">FreshCart Logic</h1>
+<button aria-label="Cloud Status" class="flex items-center justify-center w-touch-target h-touch-target text-primary hover:bg-surface-container-high transition-colors active:scale-95 duration-200 rounded-full">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">cloud_done</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 pt-20 pb-32 px-margin-edge flex flex-col items-center max-w-3xl mx-auto w-full">
+<!-- Search & Suggestions Section -->
+<section class="w-full relative z-30 mb-10">
+<!-- Search Input Wrapper -->
+<div class="relative group">
+<span class="absolute inset-y-0 left-0 flex items-center pl-4 text-outline group-focus-within:text-primary transition-colors">
+<span class="material-symbols-outlined">search</span>
+</span>
+<input class="w-full bg-surface-container-lowest border-[1.5px] border-outline-variant rounded-xl py-4 pl-12 pr-4 font-body-lg text-body-lg text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-[2px] focus:border-primary shadow-sm transition-all duration-200" placeholder="Adicionar produto..." type="text" value="Qu"/>
+<button aria-label="Clear search" class="absolute inset-y-0 right-0 flex items-center pr-4 text-outline-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Auto-suggestions Dropdown (Simulating active state based on input 'Qu') -->
+<div class="absolute top-full left-0 right-0 mt-2 bg-surface-container-lowest rounded-xl shadow-[0_4px_16px_rgba(0,0,0,0.08)] border border-outline-variant/20 overflow-hidden suggestions-scroll max-h-[240px] overflow-y-auto z-40 transform origin-top transition-all duration-200">
+<ul class="py-2">
+<li>
+<button class="w-full flex items-center px-4 py-3 hover:bg-surface-container-low active:bg-surface-container transition-colors text-left min-h-touch-target group">
+<span class="material-symbols-outlined text-outline-variant mr-3 group-hover:text-primary transition-colors">history</span>
+<span class="font-body-md text-body-md text-on-surface flex-1">
+<span class="font-semibold text-primary">Qu</span>eijo Flamengo
+                            </span>
+<span class="material-symbols-outlined text-outline-variant/50">north_west</span>
+</button>
+</li>
+<li>
+<button class="w-full flex items-center px-4 py-3 hover:bg-surface-container-low active:bg-surface-container transition-colors text-left min-h-touch-target group">
+<span class="material-symbols-outlined text-outline-variant mr-3 group-hover:text-primary transition-colors">search</span>
+<span class="font-body-md text-body-md text-on-surface flex-1">
+<span class="font-semibold text-primary">Qu</span>inoa
+                            </span>
+</button>
+</li>
+<li>
+<button class="w-full flex items-center px-4 py-3 hover:bg-surface-container-low active:bg-surface-container transition-colors text-left min-h-touch-target group">
+<span class="material-symbols-outlined text-outline-variant mr-3 group-hover:text-primary transition-colors">search</span>
+<span class="font-body-md text-body-md text-on-surface flex-1">
+<span class="font-semibold text-primary">Qu</span>iabo
+                            </span>
+</button>
+</li>
+</ul>
+<div class="bg-surface-container-low px-4 py-2 border-t border-outline-variant/10 text-center">
+<span class="font-label-md text-label-md text-on-surface-variant">Tap to add directly or search</span>
+</div>
+</div>
+</section>
+<!-- Frequent Products Section -->
+<section class="w-full relative z-20">
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Produtos Frequentes</h2>
+<button class="font-label-md text-label-md text-primary hover:bg-primary-container/20 px-3 py-1 rounded-full transition-colors">Ver todos</button>
+</div>
+<!-- Grid Layout for Items -->
+<div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+<!-- Product Card: Pão -->
+<div class="bg-surface-container-low rounded-xl p-3 flex flex-col justify-between min-h-[100px] border border-outline-variant/10 shadow-sm hover:shadow-md transition-shadow group">
+<div class="flex justify-between items-start">
+<span class="font-body-md text-body-md text-on-surface font-medium truncate pr-2">Pão</span>
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-lg">bakery_dining</span>
+</div>
+</div>
+<div class="flex justify-between items-end mt-2">
+<span class="font-label-md text-label-md text-on-surface-variant">Padaria</span>
+<button aria-label="Add Pão" class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-sm hover:bg-primary hover:text-on-primary active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+<!-- Product Card: Ovos -->
+<div class="bg-surface-container-low rounded-xl p-3 flex flex-col justify-between min-h-[100px] border border-outline-variant/10 shadow-sm hover:shadow-md transition-shadow group">
+<div class="flex justify-between items-start">
+<span class="font-body-md text-body-md text-on-surface font-medium truncate pr-2">Ovos</span>
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-lg">egg</span>
+</div>
+</div>
+<div class="flex justify-between items-end mt-2">
+<span class="font-label-md text-label-md text-on-surface-variant">Laticínios</span>
+<button aria-label="Add Ovos" class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-sm hover:bg-primary hover:text-on-primary active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+<!-- Product Card: Café -->
+<div class="bg-surface-container-low rounded-xl p-3 flex flex-col justify-between min-h-[100px] border border-outline-variant/10 shadow-sm hover:shadow-md transition-shadow group">
+<div class="flex justify-between items-start">
+<span class="font-body-md text-body-md text-on-surface font-medium truncate pr-2">Café</span>
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-lg">coffee</span>
+</div>
+</div>
+<div class="flex justify-between items-end mt-2">
+<span class="font-label-md text-label-md text-on-surface-variant">Bebidas</span>
+<button aria-label="Add Café" class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-sm hover:bg-primary hover:text-on-primary active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+<!-- Product Card: Maçãs -->
+<div class="bg-surface-container-low rounded-xl p-3 flex flex-col justify-between min-h-[100px] border border-outline-variant/10 shadow-sm hover:shadow-md transition-shadow group">
+<div class="flex justify-between items-start">
+<span class="font-body-md text-body-md text-on-surface font-medium truncate pr-2">Maçãs</span>
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-lg">nutrition</span>
+</div>
+</div>
+<div class="flex justify-between items-end mt-2">
+<span class="font-label-md text-label-md text-on-surface-variant">Frutas</span>
+<button aria-label="Add Maçãs" class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-sm hover:bg-primary hover:text-on-primary active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+<!-- Product Card: Leite -->
+<div class="bg-surface-container-low rounded-xl p-3 flex flex-col justify-between min-h-[100px] border border-outline-variant/10 shadow-sm hover:shadow-md transition-shadow group">
+<div class="flex justify-between items-start">
+<span class="font-body-md text-body-md text-on-surface font-medium truncate pr-2">Leite</span>
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-lg">water_drop</span>
+</div>
+</div>
+<div class="flex justify-between items-end mt-2">
+<span class="font-label-md text-label-md text-on-surface-variant">Laticínios</span>
+<button aria-label="Add Leite" class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-sm hover:bg-primary hover:text-on-primary active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full h-bottom-nav-height flex justify-around items-center px-4 bg-surface-container shadow-[0_-2px_8px_rgba(0,0,0,0.04)] z-50 rounded-t-xl md:hidden">
+<!-- List (Inactive) -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1 hover:bg-surface-container-highest transition-all active:scale-90 duration-150 rounded-xl">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">shopping_basket</span>
+<span class="font-label-md text-label-md">List</span>
+</button>
+<!-- Add (Active) -->
+<button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-5 py-1 hover:bg-surface-container-highest transition-all active:scale-90 duration-150 shadow-sm">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+<span class="font-label-md text-label-md">Add</span>
+</button>
+<!-- History (Inactive) -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1 hover:bg-surface-container-highest transition-all active:scale-90 duration-150 rounded-xl">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">history</span>
+<span class="font-label-md text-label-md">History</span>
+</button>
+<!-- Profile (Inactive) -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1 hover:bg-surface-container-highest transition-all active:scale-90 duration-150 rounded-xl">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">person</span>
+<span class="font-label-md text-label-md">Profile</span>
+</button>
+</nav>
+</body></html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FreshCart - Edit Product</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-container": "#3a7b39",
+                      "surface-tint": "#1b6d24",
+                      "on-primary-container": "#cbffc2",
+                      "on-tertiary-fixed": "#002203",
+                      "primary-fixed": "#a3f69c",
+                      "surface-container": "#efeded",
+                      "secondary": "#596055",
+                      "primary": "#0d631b",
+                      "secondary-fixed-dim": "#c2c9bb",
+                      "on-secondary": "#ffffff",
+                      "surface-container-highest": "#e3e2e2",
+                      "on-surface": "#1b1c1c",
+                      "on-secondary-fixed-variant": "#42493e",
+                      "on-primary-fixed-variant": "#005312",
+                      "inverse-primary": "#88d982",
+                      "secondary-fixed": "#dee5d6",
+                      "surface-container-high": "#e9e8e7",
+                      "outline-variant": "#bfcaba",
+                      "inverse-surface": "#303031",
+                      "on-primary": "#ffffff",
+                      "error": "#ba1a1a",
+                      "surface-dim": "#dbdad9",
+                      "primary-fixed-dim": "#88d982",
+                      "primary-container": "#2e7d32",
+                      "inverse-on-surface": "#f2f0f0",
+                      "on-tertiary-container": "#c8ffbf",
+                      "tertiary-fixed-dim": "#91d78a",
+                      "on-background": "#1b1c1c",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary-container": "#dee5d6",
+                      "background": "#fbf9f9",
+                      "surface": "#fbf9f9",
+                      "on-tertiary-fixed-variant": "#0c5216",
+                      "error-container": "#ffdad6",
+                      "outline": "#707a6c",
+                      "on-secondary-fixed": "#171d14",
+                      "surface-variant": "#e3e2e2",
+                      "on-tertiary": "#ffffff",
+                      "on-surface-variant": "#40493d",
+                      "on-secondary-container": "#5f665b",
+                      "on-error-container": "#93000a",
+                      "tertiary-fixed": "#acf4a4",
+                      "surface-bright": "#fbf9f9",
+                      "on-primary-fixed": "#002204",
+                      "on-error": "#ffffff",
+                      "surface-container-low": "#f5f3f3",
+                      "tertiary": "#1f6223"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "bottom-nav-height": "80px",
+                      "margin-edge": "16px",
+                      "list-item-height": "64px",
+                      "base": "8px",
+                      "touch-target": "48px",
+                      "gutter": "12px"
+              },
+              "fontFamily": {
+                      "headline-sm": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "body-md": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "label-md": ["Inter"],
+                      "label-lg": ["Inter"],
+                      "display-lg": ["Inter"],
+                      "body-md-strikethrough": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "body-lg": ["18px", {"lineHeight": "26px", "fontWeight": "400"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                      "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                      "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-md-strikethrough": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Hide scrollbar for clean UI */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* Number input spinner hide */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface h-screen w-full flex flex-col font-body-md overflow-hidden antialiased">
+<!-- Top App Bar (Task-focused page, so we hide BottomNavBar and only show back button) -->
+<header class="flex justify-between items-center h-14 px-margin-edge w-full bg-surface shadow-sm z-10 shrink-0">
+<button aria-label="Go back" class="w-touch-target h-touch-target flex items-center justify-start text-primary active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[28px]">arrow_back</span>
+</button>
+<h1 class="font-headline-sm text-headline-sm text-on-surface flex-1 text-center truncate px-4">Edit Item</h1>
+<button aria-label="Delete item" class="w-touch-target h-touch-target flex items-center justify-end text-error active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[24px]">delete</span>
+</button>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 overflow-y-auto px-margin-edge pt-6 pb-32 flex flex-col gap-8 max-w-md mx-auto w-full">
+<!-- Product Header -->
+<div class="flex flex-col items-center gap-2 text-center">
+<div class="w-24 h-24 rounded-2xl bg-surface-container-high shadow-sm mb-2 flex items-center justify-center overflow-hidden border border-outline-variant/20">
+<span class="material-symbols-outlined text-[48px] text-primary" data-weight="fill">local_drink</span>
+</div>
+<h2 class="font-display-lg text-display-lg text-on-surface leading-tight">Leite Mimosa</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Dairy &amp; Eggs</p>
+</div>
+<!-- Quantity Selector (Large Ergonomic Touch Targets) -->
+<div class="bg-surface-container-low rounded-3xl p-6 shadow-sm border border-outline-variant/10 flex flex-col gap-6">
+<h3 class="font-label-lg text-label-lg text-on-surface-variant text-center uppercase tracking-wider">Quantity</h3>
+<div class="flex items-center justify-center gap-6">
+<!-- Minus Button -->
+<button aria-label="Decrease quantity" class="w-16 h-16 rounded-full bg-surface shadow-sm border border-outline-variant/20 flex items-center justify-center text-primary hover:bg-surface-container-high active:scale-95 transition-all" onclick="updateQty(-1)">
+<span class="material-symbols-outlined text-[32px]">remove</span>
+</button>
+<!-- Number Display -->
+<div class="flex items-baseline justify-center w-24">
+<input aria-label="Quantity" class="w-full text-center bg-transparent border-none font-display-lg text-display-lg text-on-surface p-0 focus:ring-0" id="qtyInput" type="number" value="2"/>
+</div>
+<!-- Plus Button -->
+<button aria-label="Increase quantity" class="w-16 h-16 rounded-full bg-primary text-on-primary shadow-[0_4px_12px_rgba(13,99,27,0.3)] flex items-center justify-center hover:bg-primary-container active:scale-95 transition-all" onclick="updateQty(1)">
+<span class="material-symbols-outlined text-[32px]">add</span>
+</button>
+</div>
+</div>
+<!-- Unit Grid -->
+<div class="flex flex-col gap-3">
+<h3 class="font-label-lg text-label-lg text-on-surface-variant px-1 uppercase tracking-wider">Unit</h3>
+<div class="grid grid-cols-3 gap-3">
+<button class="unit-btn active rounded-xl bg-primary-container text-on-primary-container font-body-lg text-body-lg py-3 text-center transition-all shadow-sm" onclick="selectUnit(this)">un</button>
+<button class="unit-btn rounded-xl bg-surface-container text-on-surface font-body-lg text-body-lg py-3 text-center transition-all border border-outline-variant/20 hover:bg-surface-container-high" onclick="selectUnit(this)">kg</button>
+<button class="unit-btn rounded-xl bg-surface-container text-on-surface font-body-lg text-body-lg py-3 text-center transition-all border border-outline-variant/20 hover:bg-surface-container-high" onclick="selectUnit(this)">l</button>
+<button class="unit-btn rounded-xl bg-surface-container text-on-surface font-body-lg text-body-lg py-3 text-center transition-all border border-outline-variant/20 hover:bg-surface-container-high" onclick="selectUnit(this)">g</button>
+<button class="unit-btn rounded-xl bg-surface-container text-on-surface font-body-lg text-body-lg py-3 text-center transition-all border border-outline-variant/20 hover:bg-surface-container-high" onclick="selectUnit(this)">caixa</button>
+<button class="unit-btn rounded-xl bg-surface-container text-on-surface font-body-lg text-body-lg py-3 text-center transition-all border border-outline-variant/20 hover:bg-surface-container-high" onclick="selectUnit(this)">pacote</button>
+</div>
+</div>
+<!-- Notes Field -->
+<div class="flex flex-col gap-2 mt-2">
+<label class="font-label-lg text-label-lg text-on-surface-variant px-1 uppercase tracking-wider" for="notes">Notes</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-4 text-outline">edit_note</span>
+<input class="w-full bg-surface-container-low border-[1.5px] border-outline-variant rounded-xl pl-12 pr-4 py-4 font-body-md text-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" id="notes" placeholder="Add a note..." type="text" value="Meio Gordo"/>
+</div>
+</div>
+</main>
+<!-- Bottom Fixed Action Area -->
+<div class="fixed bottom-0 left-0 w-full p-margin-edge bg-surface/90 backdrop-blur-md border-t border-outline-variant/10 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-20">
+<div class="max-w-md mx-auto">
+<button class="w-full h-14 bg-primary text-on-primary rounded-full font-headline-sm text-headline-sm shadow-[0_4px_12px_rgba(13,99,27,0.2)] hover:bg-primary-container active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[24px]">save</span>
+                Guardar
+            </button>
+</div>
+</div>
+<script>
+        function updateQty(change) {
+            const input = document.getElementById('qtyInput');
+            let val = parseInt(input.value) || 0;
+            val += change;
+            if (val < 1) val = 1;
+            input.value = val;
+            
+            // Subtle animation on the input
+            input.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+                input.style.transform = 'scale(1)';
+                input.style.transition = 'transform 0.15s ease';
+            }, 50);
+        }
+
+        function selectUnit(btn) {
+            // Remove active classes from all
+            document.querySelectorAll('.unit-btn').forEach(b => {
+                b.className = 'unit-btn rounded-xl bg-surface-container text-on-surface font-body-lg text-body-lg py-3 text-center transition-all border border-outline-variant/20 hover:bg-surface-container-high';
+            });
+            // Add active classes to clicked
+            btn.className = 'unit-btn active rounded-xl bg-primary-container text-on-primary-container font-body-lg text-body-lg py-3 text-center transition-all shadow-sm';
+        }
+    </script>
+</body></html>
